@@ -1,0 +1,69 @@
+import customtkinter
+from tkinter import PhotoImage
+
+window = customtkinter.CTk()
+window.title("CustomTkinter Example")
+window.geometry("620x520")
+customtkinter.set_appearance_mode("System")  
+customtkinter.set_default_color_theme("blue")
+# Top area: name entry + greet button
+top_frame = customtkinter.CTkFrame(master=window)
+top_frame.pack(pady=12, padx=12, fill="x")
+
+name = customtkinter.CTkEntry(master=top_frame, placeholder_text="Enter your name")
+name.pack(side="left", pady=10, padx=(8, 6), fill="x", expand=True)
+
+def button_callback():
+    label.configure(text=f"Hello, {name.get()}!", font=("Gill Sans MT", 18))
+    label.focus()
+
+button = customtkinter.CTkButton(master=top_frame, text="Let's begin", command=button_callback)
+button.pack(side="left", pady=10, padx=6)
+
+# Scrollable tasks area with fixed height so scrollbar appears when needed
+tasks_frame = customtkinter.CTkScrollableFrame(master=window, width=560, height=260)
+tasks_frame.pack(pady=8, padx=12, fill="both")
+
+# Entry and add button for tasks
+controls_frame = customtkinter.CTkFrame(master=window)
+controls_frame.pack(pady=(6, 12), padx=12, fill="x")
+
+task_entry = customtkinter.CTkEntry(master=controls_frame, placeholder_text="Enter task")
+task_entry.pack(side="left", fill="x", expand=True, padx=(8, 6))
+
+def add_task(event=None):
+    text = task_entry.get().strip()
+    if not text:
+        return
+
+    # container for a single task (so delete can remove it easily)
+    task_container = customtkinter.CTkFrame(master=tasks_frame)
+    task_container.pack(fill="x", pady=4, padx=6)
+
+    # a checkbox to mark completion
+    try:
+        cb = customtkinter.CTkCheckBox(master=task_container, text=text)
+        cb.pack(side="left", padx=(6, 8), pady=6)
+    except Exception:
+        # fallback to a label if CTkCheckBox signature differs
+        lbl = customtkinter.CTkLabel(master=task_container, text=text, anchor="w")
+        lbl.pack(side="left", padx=(6, 8), pady=6, fill="x", expand=True)
+
+    # delete button
+    del_btn = customtkinter.CTkButton(master=task_container, text="Delete", width=80,
+                                     command=task_container.destroy)
+    del_btn.pack(side="right", padx=6, pady=6)
+
+    task_entry.delete(0, "end")
+
+
+add_btn = customtkinter.CTkButton(master=controls_frame, text="Add Task", command=add_task)
+add_btn.pack(side="right", padx=(6, 8))
+
+# Bind Enter key to add task
+task_entry.bind("<Return>", add_task)
+
+label = customtkinter.CTkLabel(master=window, text="")
+label.pack(pady=6)
+
+window.mainloop()
